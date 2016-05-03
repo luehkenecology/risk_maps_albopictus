@@ -4,19 +4,11 @@
 rm(list = ls())
 
 #============================================================
-# set working directory
-#============================================================
-#setwd("F:/NeuAll/R/ensemble_climate_data")
-#setwd("~/Google Drive/R/Dirofillaria")
-#setwd("C:/Users/RenkeLuehken/Google Drive/R/ensemble_climate_data")
-#setwd("D:/NeuAll/projects/reserach_projects/mosquito_ecology/risk_maps_albopictus")
-
-#============================================================
 # load libraries
 #============================================================
 library(plyr)
 library(ggplot2)
-library(scales) # to access breaks/formatting functions
+library(scales)
 require(lubridate)
 library(zoo)
 require(fields)
@@ -32,8 +24,18 @@ library(colorRamps)
 library(animation)
 library(RcppRoll)
 library(rworldmap)
-bb
-#
+
+#============================================================
+# read data
+#============================================================
+
+#==========
+# read temperature dataset
+brick_all_tg1 <- stack("D:/NeuAll/projects/reserach_projects/general_data/climate/Germany_Temperature_2006_2016.grd")
+
+#==========
+# gps coordinates
+
 # Schwarzwald - beginning October 2015 - end February 2016
 gps_schwarzwald <-matrix(nrow=1,ncol=2)
 gps_schwarzwald[1,1]<-8.334848
@@ -47,32 +49,20 @@ gps_freiburg[1,2]<-47.999008
 gps_heidelberg <-matrix(nrow=1,ncol=2)
 gps_heidelberg[1,1]<-8.672434
 gps_heidelberg[1,2]<-49.398752
-#============================================================
-#  Freiburg
-#============================================================
-#tzer<-matrix(nrow=1,ncol=2)
-#tzer[1,1]<-7.842104
-#tzer[1,2]<-47.999008
 
-#============================================================
+#////////////////////////////////////////////////////////////
 # read data
-#============================================================
 
-#kmGrid<- readShapeSpatial("data/grid_25km")
-#state.map.ger <- readShapeSpatial("F:/NeuAll/R/Autoverkehr/data/DEU_adm1.shp")
-
-#Germany
-#e<-extent(c(5.91483, 14.99119, 47.26986, 55.05653))
-
-brick_all_tg1 <- stack("D:/NeuAll/projects/reserach_projects/general_data/climate/Germany_Temperature_2006_2016.grd")
 dfdfdf1 <- getValues(brick_all_tg1)
-# Time
 
-A1<-paste(2006, "-01-01", sep = "")
-A2<-paste(2016, "-12-31", sep = "")
-time.s=as.POSIXct(A1,tz='UTC')
-time.e=as.POSIXct(A2,tz='UTC')
-tseq=seq(time.s, time.e, by='24 hours')
+
+
+# Time
+A1 <- paste(2006, "-01-01", sep = "")
+A2 <- paste(2016, "-12-31", sep = "")
+time.s <- as.POSIXct(A1, tz = 'UTC')
+time.e <- as.POSIXct(A2, tz = 'UTC')
+tseq = seq(time.s, time.e, by = '24 hours')
 
 dfdf <- extract(brick_all_tg1, gps_schwarzwald)
 dfdf_2 <- extract(brick_all_tg1, gps_heidelberg)
