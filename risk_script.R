@@ -205,8 +205,7 @@ gtunc <- function(x){
 gtunc(as.numeric(dfdf_3[3561:3743]))
 
 # October-Apri=0, May-September=1
-larger_september <-ifelse(month(tseq)>9,1,0)
-smaller_march <-ifelse(month(tseq)<4,-1,0)
+
 
 january<-ifelse(month(tseq)<2,1,0)
 #SUBS2[3653:3683]
@@ -215,15 +214,15 @@ january<-ifelse(month(tseq)<2,1,0)
 #==================================================
 # calculation
 #==================================================
-aedes_min <- function(x){
-  temp<-as.numeric(x)
+aedes_min <- function(x, time_start, time_end){
+  temp <- as.numeric(x)
   
-  testfull<-data.frame(year=year(tseq),tempen=temp)
+  testfull <- data.frame(year = year(tseq), tempen=temp)
   
   # mean january temperature
-  testfull_2 <-data.frame(testfull, larger_september, smaller_march)
+  testfull_2 <-data.frame(testfull, time_start, time_end)
   
-  testfull_2_sub<-subset(testfull_2, larger_september>0 |smaller_march<0)
+  testfull_2_sub<-subset(testfull_2, time_start > 0 | time_end < 0)
   testfull_2_sub$new_year <- testfull_2_sub$year + testfull_2_sub$smaller_march
   
   testfull3_b<-subset(testfull_2_sub,new_year>2005 & new_year<2016)
@@ -326,8 +325,17 @@ aedes_mean <- function(x){
   einsd$sf
 }
 
-res_mean<-apply(dfdfdf1, 1, function(x) aedes_mean(x))
-res_min<-apply(dfdfdf1, 1, function(x) aedes_min(x))
+source("R/minimum_time_row.R")
+source("R/mean_specific_month.R")
+
+
+res_mean<-apply(dfdfdf1, 1, function(x) mean_specific_month(x, tseq, 12, 2, "mean"))
+res_min<-apply(dfdfdf1, 1, function(x) mean_specific_month(x, tseq, 9, 4, "min"))
+res_variability<-apply(dfdfdf1, 1, function(x) mean_specific_month(x, tseq, 9, 4, "variability"))
+
+
+
+
 res_count_min<-apply(dfdfdf1, 1, function(x) aedes_count_min(x))
 res_count_min_in_row<-apply(dfdfdf1, 1, function(x) count_min_in_row(x))
 res_variability<-apply(dfdfdf1, 1, function(x) variability(x))
@@ -366,6 +374,8 @@ res_res_min_sum_4<-brick(unlist(res_res_min_sum_3))
 # transform to raster
 plot(res_mean_4 >= 0.2519355)
 plot(res_min_4 >= -10.5)
+plot(res_min_4 >= -10.5)
+
 plot(res_count_min_4 <=31)
 plot(res_count_min_in_row_4<=10)
 plot(res_variability_4<=17)
