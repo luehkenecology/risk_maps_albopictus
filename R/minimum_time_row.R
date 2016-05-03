@@ -1,16 +1,24 @@
-minimum_time_row <- function(x, time_start, time_end){
-  temp <- as.numeric(x)
+minimum_from_to_in_time_row <- function(x, t_seq, time_start, time_end){
   
-  testfull <- data.frame(year = year(tseq), tempen=temp)
+  time_start_pa <- ifelse(month(t_seq) > time_start, 1, 0)
+  time_end_pa <-ifelse(month(t_seq) < time_end, -1, 0)
   
-  testfull_2 <-data.frame(testfull, time_start, time_end)
+  values <- as.numeric(x)
   
-  testfull_2_sub<-subset(testfull_2, time_start > 0 | time_end < 0)
-  testfull_2_sub$new_year <- testfull_2_sub$year + testfull_2_sub$smaller_march
+  dataset <- data.frame(year = year(t_seq), values = values,
+                        time_start_pa, time_end_pa)
   
-  testfull3_b<-subset(testfull_2_sub,new_year>2005 & new_year<2016)
+  dataset_sub <- subset(dataset, time_start_pa > 0 | time_end_pa < 0)
   
-  einsd<-ddply(testfull3_b,.(new_year),summarize,sf=min(tempen, na.rm=T))
+  # new year variable 
+  dataset_sub$new_year <- dataset_sub$year + dataset_sub$time_end_pa
   
-  einsd$sf
+  dataset_sub_2 <- subset(dataset_sub, new_year > min(new_year) & 
+                            new_year < max(year))
+  
+  # calculation
+  calculation <- ddply(dataset_sub_2, .(new_year), summarize, 
+                       result = min(values, na.rm=T))
+  
+  calculation$result
 }

@@ -329,24 +329,25 @@ source("R/minimum_time_row.R")
 source("R/mean_specific_month.R")
 
 
-res_mean<-apply(dfdfdf1, 1, function(x) mean_specific_month(x, tseq, 12, 2, "mean"))
-res_min<-apply(dfdfdf1, 1, function(x) mean_specific_month(x, tseq, 9, 4, "min"))
-res_variability<-apply(dfdfdf1, 1, function(x) mean_specific_month(x, tseq, 9, 4, "variability"))
+res_mean <- apply(dfdfdf1, 1, function(x) mean_specific_month(x, tseq, 12, 2, "mean"))
+res_min <- apply(dfdfdf1, 1, function(x) mean_specific_month(x, tseq, 9, 4, "min"))
+res_variability<-apply(dfdfdf1, 1, function(x) 
+  mean_specific_month(x, tseq, 9, 4, "variability"))
+res_count_min_in_row<-apply(dfdfdf1, 1, function(x) 
+  mean_specific_month(x, tseq, 9, 4, "max_in_row"))
+res_n_min_values <- apply(dfdfdf1, 1, function(x) 
+  mean_specific_month(x, tseq, 9, 4, "n_min_values"))
 
-
-
-
-res_count_min<-apply(dfdfdf1, 1, function(x) aedes_count_min(x))
-res_count_min_in_row<-apply(dfdfdf1, 1, function(x) count_min_in_row(x))
-res_variability<-apply(dfdfdf1, 1, function(x) variability(x))
-res_min_sum<-apply(dfdfdf1, 1, function(x) min_sum(x))
+res_n_min_values_2 <- t(res_n_min_values)
+res_n_min_values_3 <- lapply(1:ncol(res_n_min_values_2), function(x) 
+  setValues(brick_all_tg1[[1]],res_n_min_values_2[,x]))
+res_n_min_values_4 <- brick(unlist(res_n_min_values_3))
 
 res_mean_2<-t(res_mean)
 res_min_2<-t(res_min)
 res_count_min_2<-t(res_count_min)
 res_count_min_in_row_2<-t(res_count_min_in_row)
 res_variability_2<-t(res_variability)
-res_res_min_sum_2<-t(res_min_sum)
 
 res_mean_3<-lapply(1:ncol(res_mean_2), function(x) 
   setValues(brick_all_tg1[[1]],res_mean_2[,x]))
@@ -399,7 +400,7 @@ plot(mask(sum(res_min_4 >= -10.5, na.rm=T), state.map),
 points(gps_freiburg, col = "red", cex = 2, lwd = 3)
 points(gps_heidelberg, col = "red", cex = 2, lwd = 3)
 plot(state.map,add=T)
-plot(mask(sum(res_count_min_4 <= 31, na.rm=T), state.map), 
+plot(mask(sum(res_mean_4 <= 31, na.rm=T), state.map), 
      main = "days below zero <= 31 days",col = A,breaks=brks)
 points(gps_freiburg, col = "red", cex = 2, lwd = 3)
 points(gps_heidelberg, col = "red", cex = 2, lwd = 3)

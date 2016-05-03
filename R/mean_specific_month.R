@@ -25,9 +25,14 @@ mean_specific_month <- function(x, t_seq, time_start, time_end, func_sel){
     calculation <- ddply(dataset_sub_2, .(new_year), summarize, 
                          result = min(values, na.rm=T))}
   
+  if(func_sel == "n_min_values"){
+    calculation <- ddply(dataset_sub_2, .(new_year), summarize, 
+                         result =sum(ifelse(values<0, 1,0)))}
+  
   if(func_sel == "variability"){
     calculation <- ddply(dataset_sub_2, .(new_year), summarize, 
-                         result = max(rle(values < 0)$length[rle(values < 0)$values]))}
+                         result =length(rle(values < 0)$length))}
   
   calculation$result
+  
 }
