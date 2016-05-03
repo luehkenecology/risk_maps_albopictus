@@ -32,7 +32,8 @@ library(colorRamps)
 library(animation)
 library(RcppRoll)
 library(rworldmap)
-
+bb
+#
 # Schwarzwald - beginning October 2015 - end February 2016
 gps_schwarzwald <-matrix(nrow=1,ncol=2)
 gps_schwarzwald[1,1]<-8.334848
